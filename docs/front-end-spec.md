@@ -17,6 +17,7 @@
 | Date | Version | Description | Author |
 | --- | --- | --- | --- |
 | 2025-09-15 | 0.1 | 최초 작성(PRD 기반 UX 프레임) | UX |
+| 2025-09-15 | 0.2 | OKLCH 팔레트 및 개인화 지침 추가 | UX |
 
 ## Information Architecture (IA)
 - 최상위 섹션 라우트: `/finops`, `/platform`, `/product`
@@ -103,11 +104,34 @@ flowchart TD
   - 폼(검증/에러/도움말), 배지/Tag, 모달/드로어, 토스트/알림, Stepper
   - 접근성 유틸: Live Region, Focus Trap, Skip Link
 
-## Branding & Style Guide(초안)
-- 색상: Primary `#3B82F6`, Secondary `#0EA5E9`, Accent `#10B981`, Success `#22C55E`, Warning `#F59E0B`, Error `#EF4444`, Neutral Gray Scale
-- 타이포그래피: Sans(Inter/pretendard), Mono(ui-monospace)
-- 아이콘: Lucide/Phosphor 기반, 20/24px 일관 스케일
-- 간격/레이아웃: 4/8px 스케일, 12컬럼 그리드(Desktop), 4/8컬럼(Card/Mobile)
+## Branding & Style Guide(OKLCH)
+- 원칙: 명도/채도/색상 분리 제어로 일관된 대비와 테마 확장성 확보
+- 팔레트(OKLCH):
+  - Primary: oklch(0.68 0.15 262)
+  - Secondary: oklch(0.7 0.1 220)
+  - Accent: oklch(0.75 0.12 160)
+  - Success: oklch(0.75 0.12 145)
+  - Warning: oklch(0.83 0.14 80)
+  - Error: oklch(0.67 0.16 28)
+  - Neutral-0..900: oklch(0.99 0 95) → oklch(0.2 0 95) 단계 스케일
+- 사용 지침:
+  - KPI 양/음수 표시: Success/Error 사용, 색만으로 의미 전달 금지(아이콘/텍스트 병행)
+  - 대비: 본문 대비 최소 4.5:1, 대형 텍스트 3:1 이상 유지
+  - 다크모드: L 값 축소 중심으로 변환, C/H는 경미하게 조정
+
+## Role/Expertise Personalization
+- 공통 원칙: 역할과 도메인 숙련도(초급/중급/고급)에 따라 정보 밀도·용어·기본 뷰를 조정
+- 초기 랜딩/프리셋
+  - 재무 사용자: 비용/KPI 중심 카드 묶음, 자연어 설명/툴팁 기본 ON, 통화/타임존 우선
+  - 플랫폼 엔지니어: 수집 상태/에러/리트라이·지연 메트릭, 원인 상관 진입 단축, 로그 링크
+  - 제품/PM: 피처별 비용 드라이버, 변경 이력·승인 현황, 실험/AB 요약
+- 전문성별 제어
+  - 초급: 용어 툴팁 항상 표시, 단순 필터 세트, 안전 가드(확인 대화) 강화
+  - 중급: 고급 필터 일부 노출, 저장된 뷰/템플릿 제공
+  - 고급: 고급 필터 전체, 단축키/쿼리 모드, 경고는 요약 배지로 축약
+- 접근성/국제화
+  - 숫자/통화/단위 로케일 적용, 스크린리더 친화 툴팁/정의 연결
+  - 개인화 설정은 서버에 저장, 장치 간 동기화(Opt-in)
 
 ## Accessibility Requirements(WCAG AA)
 - 시각: 대비 기준 충족, 포커스 링 가시성, 글자 크기 조절 대응
@@ -137,3 +161,87 @@ flowchart TD
 
 ## Checklist Results
 - UX 리뷰 통과(초안) — 아키텍처/데이터 계약 산출 후 갱신 예정
+
+---
+
+### Tailwind OKLCH 매핑(권장 스니펫)
+```ts
+// tailwind.config.ts
+import type { Config } from 'tailwindcss'
+
+export default <Partial<Config>>{
+  theme: {
+    extend: {
+      colors: {
+        primary: 'oklch(0.68 0.15 / <alpha-value>)',
+        secondary: 'oklch(0.7 0.1 / <alpha-value>)',
+        accent: 'oklch(0.75 0.12 / <alpha-value>)',
+        success: 'oklch(0.75 0.12 / <alpha-value>)',
+        warning: 'oklch(0.83 0.14 / <alpha-value>)',
+        error: 'oklch(0.67 0.16 / <alpha-value>)',
+        // 중립 스케일은 CSS 변수 혹은 plugin으로 생성 권장
+      },
+    },
+  },
+}
+```
+```css
+/* globals.css */
+:root{
+  --color-primary: oklch(0.68 0.15 262);
+  --color-secondary: oklch(0.7 0.1 220);
+  --color-accent: oklch(0.75 0.12 160);
+  --color-success: oklch(0.75 0.12 145);
+  --color-warning: oklch(0.83 0.14 80);
+  --color-error: oklch(0.67 0.16 28);
+}
+.dark{
+  /* L 축 중심 감쇠 */
+  --color-primary: oklch(0.6 0.15 262);
+}
+```
+
+### 개인화 설정 모델(권장 초안)
+```ts
+// src/lib/prefs.ts
+export type Role = 'finance' | 'platform' | 'product'
+export type Proficiency = 'beginner' | 'intermediate' | 'advanced'
+
+export interface UserPrefs {
+  role: Role
+  proficiency: Proficiency
+  locale: string
+  currency: string
+  timezone: string
+  tooltips: boolean // 용어 툴팁 기본 ON/OFF
+  savedViews: Record<string, string> // route->viewId
+}
+
+export const defaultPrefs: UserPrefs = {
+  role: 'finance',
+  proficiency: 'beginner',
+  locale: 'ko-KR',
+  currency: 'KRW',
+  timezone: 'Asia/Seoul',
+  tooltips: true,
+  savedViews: {},
+}
+```
+```ts
+// 서버 저장/동기화 예시(Stub)
+// src/app/api/prefs/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function GET(){
+  // TODO: 세션 사용자별 prefs 조회
+  return NextResponse.json({ ok: true, data: {/* ... */} })
+}
+
+export async function PUT(req: NextRequest){
+  const body = await req.json()
+  // TODO: 검증 후 저장
+  return NextResponse.json({ ok: true })
+}
+```
+
+- UI 적용: 초기 렌더 시 서버에서 `UserPrefs`를 불러와 역할/숙련도에 따라 카드 구성을 스위칭하고, 툴팁/고급 필터 노출을 제어합니다.
