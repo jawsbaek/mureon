@@ -18,6 +18,7 @@
 | --- | --- | --- | --- |
 | 2025-09-15 | 0.1 | 최초 작성(PRD 기반 UX 프레임) | UX |
 | 2025-09-15 | 0.2 | OKLCH 팔레트 및 개인화 지침 추가 | UX |
+| 2025-09-15 | 0.3 | Information Architecture 오류 수정 | UX |
 
 ## Information Architecture (IA)
 - 최상위 섹션 라우트: `/finops`, `/platform`, `/product`
@@ -27,9 +28,9 @@
 graph TD
   A[App] --> L[로그인]
   A --> D[메인지표 개요]
-  A --> F[/finops]
-  A --> P[/platform]
-  A --> R[/product]
+  A --> F[/finops/]
+  A --> P[/platform/]
+  A --> R[/product/]
 
   F --> F1[단위경제 탐색]
   F --> F2[쇼백 리포트]
