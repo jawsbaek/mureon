@@ -18,13 +18,13 @@ graph TD
     C3[LLM Provider Metrics]:::src
   end
 
-  subgraph Ingestion & Normalization
+  subgraph Ingestion
     I1[Connectors]-->I2[AnyCost Mapper]
     I2-->I3[Validation & Quality Rules]
     I3-->BQ[(Data Lake)]
   end
 
-  BQ-->W[(OLAP Warehouse\nClickHouse/BigQuery/Snowflake)]
+  BQ-->W["OLAP Warehouse<br/>ClickHouse/BigQuery/Snowflake"]
   W-->V1[Materialized Views / Aggregations]
 
   subgraph Engines
@@ -40,7 +40,7 @@ graph TD
   V1-->E4
 
   subgraph Interfaces
-    API[API Gateway/Service\nSDK]
+    API["API Gateway/Service<br/>SDK"]
     RBAC[RBAC/Policy]
     AUD[Audit Log]
   end
@@ -57,7 +57,6 @@ graph TD
     UI2[/platform]
     UI3[/product]
     SSR[SSR/RSC Cache]
-  end
   end
 
   API<-->SSR
