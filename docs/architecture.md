@@ -4,6 +4,7 @@
 | Date | Version | Description | Author |
 | --- | --- | --- | --- |
 | 2025-09-15 | 0.1 | Initial architecture draft from PRD + Front-end Spec | Architect |
+| 2025-09-17 | 0.2 | Initial architecture draft from PRD + Front-end Spec | jawsbaek |
 
 ## Overview
 본 문서는 PRD(`docs/prd.md`)와 UI/UX 스펙(`docs/front-end-spec.md`)을 근거로, AI FinOps 제품의 v1 아키텍처(8–12주 MVP 범위)를 정의합니다. 목표는 AnyCost 수집/정규화, 단위경제 대시보드, 이상탐지 v1, LLM 라우팅 v1, GPU 권장 v1, 쇼백/예산 경보 및 RBAC/감사 로그를 안정적으로 제공하는 것입니다.
@@ -51,11 +52,12 @@ graph TD
   API-->RBAC
   API-->AUD
 
-  subgraph Web UI (Next.js App Router)
+  subgraph WebUI[Web UI (Next.js App Router)]
     UI1[/finops]
     UI2[/platform]
     UI3[/product]
     SSR[SSR/RSC Cache]
+  end
   end
 
   API<-->SSR
