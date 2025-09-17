@@ -13,19 +13,19 @@
 ```mermaid
 graph TD
   subgraph Sources
-    C1[Cloud Billing/Usage]:::src
-    C2[On-Prem: Prometheus/Slurm]:::src
+    C1[Cloud Billing Usage]:::src
+    C2[On-Prem Prometheus Slurm]:::src
     C3[LLM Provider Metrics]:::src
   end
 
-  subgraph Ingestion & Normalization
+  subgraph Ingestion
     I1[Connectors]-->I2[AnyCost Mapper]
-    I2-->I3[Validation & Quality Rules]
+    I2-->I3[Validation Quality Rules]
     I3-->BQ[(Data Lake)]
   end
 
-  BQ-->W[(OLAP Warehouse\nClickHouse/BigQuery/Snowflake)]
-  W-->V1[Materialized Views / Aggregations]
+  BQ-->W[OLAP Warehouse ClickHouse BigQuery Snowflake]
+  W-->V1[Materialized Views Aggregations]
 
   subgraph Engines
     E1[Cost Model]
@@ -40,8 +40,8 @@ graph TD
   V1-->E4
 
   subgraph Interfaces
-    API[API Gateway/Service\nSDK]
-    RBAC[RBAC/Policy]
+    API[API Gateway Service SDK]
+    RBAC[RBAC Policy]
     AUD[Audit Log]
   end
 
@@ -52,12 +52,11 @@ graph TD
   API-->RBAC
   API-->AUD
 
-  subgraph WebUI[Web UI (Next.js App Router)]
-    UI1[/finops]
-    UI2[/platform]
-    UI3[/product]
-    SSR[SSR/RSC Cache]
-  end
+  subgraph WebUI
+    UI1[finops]
+    UI2[platform]
+    UI3[product]
+    SSR[SSR RSC Cache]
   end
 
   API<-->SSR
