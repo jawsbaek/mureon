@@ -39,7 +39,7 @@ graph TD
   V1-->E4
 
   subgraph Interfaces
-    API[API Gateway/Service]\nSDK
+    API[API Gateway/Service\nSDK]
     RBAC[RBAC/Policy]
     AUD[Audit Log]
   end
