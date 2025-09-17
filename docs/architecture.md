@@ -52,7 +52,7 @@ graph TD
   API-->RBAC
   API-->AUD
 
-  subgraph WebUI[Web UI (Next.js App Router)]
+  subgraph WebUI
     UI1[/finops]
     UI2[/platform]
     UI3[/product]
